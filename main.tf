@@ -26,10 +26,11 @@ resource "aws_instance" "server" {
     command = <<EOF
     sleep 60
     echo "[python]\n${aws_instance.server.public_ip}" > python/inventory
-	ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+	ansible-playbook \
         -i python/inventory \
         -u ubuntu \
         --private-key ${var.private_key} \
+        --ssh-common-args="-o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
         python/playbook.yaml
     EOF
   }
@@ -60,7 +61,7 @@ output "address" {
 }
 
 output "connect" {
-  value = "ssh -i ${var.private_key} ubuntu@${aws_instance.server.public_ip}"
+  value = "ssh -i ${var.private_key} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${aws_instance.server.public_ip}"
 }
 
 output "private_key" {
