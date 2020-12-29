@@ -55,6 +55,15 @@ resource "aws_security_group" "server" {
   }
 }
 
+output "address" {
+  value = aws_instance.server.public_ip
+}
+
 output "connect" {
   value = "ssh -i ${var.private_key} ubuntu@${aws_instance.server.public_ip}"
 }
+
+output "private_key" {
+  value = var.private_key
+}
+

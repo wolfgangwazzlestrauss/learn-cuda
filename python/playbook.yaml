@@ -1,9 +1,16 @@
 - name: Install CUDA Python examples
   hosts: python
   tasks:
-    - name: Update Apt cache
+    - name: Update Apt cache and upgrade Apt packages
       apt:
+        autoremove: yes
         update_cache: yes
+        upgrade: yes
+      become: yes
+    - name: Install CUDA toolkit
+      apt:
+        name: nvidia-cuda-toolkit
+        state: latest
       become: yes
     - name: Install Python Apt packages
       apt:
@@ -13,12 +20,18 @@
           - python3-venv
         state: latest
       become: yes
-    - name: Install CUDA toolkit
-      apt:
-        name: nvidia-cuda-toolkit
-        state: latest
-      become: yes
-    - name: Copy example file
+    - name: Install Poetry
+      pip:
+        executable: pip3
+        name: poetry
+    - name: Copy Python code
       copy:
-        src: pyproject.toml
-        dest: /home/ubuntu/pyproject.toml
+        src: ./
+        dest: "{{ ansible_env.HOME }}/python"
+    - name: Install code Python dependencies
+      environment:
+        PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+      shell:
+        chdir: "{{ ansible_env.HOME }}/python"
+        cmd: poetry install
+        executable: /bin/bash

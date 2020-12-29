@@ -66,7 +66,7 @@ apply() {
     generate_keys
     _private_key="$RET_VAL"
 
-    terraform init
+    terraform init > /dev/null
     terraform apply -auto-approve -var="private_key=$_private_key"
 }
 
@@ -104,7 +104,7 @@ error() {
 generate_keys() {
     local _private_key
 
-    echo "Generating and authorizing temporary SSH keys..."
+    echo "Generating temporary SSH keys for cloud servers..."
 
     # Generate a temporary paths.
     #
