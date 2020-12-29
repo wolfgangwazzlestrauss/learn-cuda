@@ -173,4 +173,4 @@ main() {
 }
 
 # Execute main with command line arguments and call exit on failure.
-main "$@" || exit 1
+main "$@"

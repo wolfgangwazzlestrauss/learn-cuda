@@ -1,0 +1,24 @@
+- name: Install CUDA Python examples
+  hosts: python
+  tasks:
+    - name: Update Apt cache
+      apt:
+        update_cache: yes
+      become: yes
+    - name: Install Python Apt packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+        state: latest
+      become: yes
+    - name: Install CUDA toolkit
+      apt:
+        name: nvidia-cuda-toolkit
+        state: latest
+      become: yes
+    - name: Copy example file
+      copy:
+        src: pyproject.toml
+        dest: /home/ubuntu/pyproject.toml

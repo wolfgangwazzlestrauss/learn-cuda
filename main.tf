@@ -8,10 +8,31 @@ variable "private_key" {
 }
 
 resource "aws_instance" "server" {
-  ami                    = "ami-09dd2e08d601bff67"
-  instance_type          = "t2.micro"
+  ami                    = "ami-07dd19a7900a1f049"
+  instance_type = "t2.micro"
+#   instance_type          = "g4dn.xlarge"
   key_name               = aws_key_pair.server.key_name
   vpc_security_group_ids = [aws_security_group.server.id]
+
+  connection {
+    host        = self.public_ip
+    port        = 22
+    private_key = file(var.private_key)
+    type        = "ssh"
+    user        = "ubuntu"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+    sleep 60
+    echo "[python]\n${aws_instance.server.public_ip}" > python/inventory
+	ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+        -i python/inventory \
+        -u ubuntu \
+        --private-key ${var.private_key} \
+        python/playbook.yaml
+    EOF
+  }
 }
 
 resource "aws_key_pair" "server" {
