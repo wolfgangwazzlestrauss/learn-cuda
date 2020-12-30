@@ -10,11 +10,11 @@ usage() {
     case "$1" in
         apply)
             cat 1>&2 <<EOF
-manage.sh apply
+main.sh apply
 Provision cloud resources with Terraform
 
 USAGE:
-    manage.sh apply [FLAGS] [provider]
+    main.sh apply [FLAGS] [provider]
 
 FLAGS:
     -h, --help       Print help information
@@ -25,11 +25,11 @@ EOF
             ;;
         connect)
             cat 1>&2 <<EOF
-manage.sh connect
+main.sh connect
 Provision and connect to cloud resources
 
 USAGE:
-    manage.sh connect [FLAGS] [OPTIONS]
+    main.sh connect [FLAGS] [OPTIONS]
 
 FLAGS:
     -h, --help       Print help information
@@ -40,11 +40,11 @@ EOF
             ;;
         destroy)
             cat 1>&2 <<EOF
-manage.sh destroy
+main.sh destroy
 Remove cloud resources with Terraform
 
 USAGE:
-    manage.sh destroy [FLAGS] [OPTIONS]
+    main.sh destroy [FLAGS] [OPTIONS]
 
 FLAGS:
     -h, --help       Print help information
@@ -184,9 +184,9 @@ generate_keys() {
     RET_VAL="$_private_key"
 }
 
-# Get manage.sh version string
+# Get main.sh version string
 version() {
-    echo "manage.sh 0.0.1"
+    echo "main.sh 0.0.1"
 }
 
 # Script entrypoint.
