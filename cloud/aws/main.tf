@@ -9,8 +9,8 @@ variable "private_key" {
 
 resource "aws_instance" "server" {
   ami                    = "ami-07dd19a7900a1f049"
-  instance_type = "t2.micro"
-#   instance_type          = "g4dn.xlarge"
+#   instance_type = "t2.micro"
+  instance_type          = "g4dn.xlarge"
   key_name               = aws_key_pair.server.key_name
   vpc_security_group_ids = [aws_security_group.server.id]
 

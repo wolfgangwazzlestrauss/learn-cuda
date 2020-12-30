@@ -7,16 +7,22 @@
         update_cache: yes
         upgrade: yes
       become: yes
-    - name: Install CUDA toolkit
+    - name: Install CUDA package dependencies
       apt:
-        name: nvidia-cuda-toolkit
+        name:
+          - gcc
+          - g++
+          - nvidia-cuda-toolkit
+          - nvidia-driver-455
+          - nvidia-utils-455
         state: latest
       become: yes
     - name: Install Python Apt packages
       apt:
         name:
-          - python3.9
           - python3-pip
+          - python3.9
+          - python3.9-dev
           - python3.9-venv
         state: latest
       become: yes
@@ -39,3 +45,5 @@
           poetry config virtualenvs.in-project true
           poetry install
         executable: /bin/bash
+    - name: Reboot machine to start NVIDIA drivers
+      reboot:
