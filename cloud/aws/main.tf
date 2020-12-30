@@ -14,6 +14,10 @@ resource "aws_instance" "server" {
   key_name               = aws_key_pair.server.key_name
   vpc_security_group_ids = [aws_security_group.server.id]
 
+  root_block_device {
+    volume_size = 32
+  }
+
   connection {
     host        = self.public_ip
     port        = 22
@@ -25,13 +29,13 @@ resource "aws_instance" "server" {
   provisioner "local-exec" {
     command = <<EOF
     sleep 60
-    echo "[python]\n${aws_instance.server.public_ip}" > python/inventory
+    echo "[python]\n${aws_instance.server.public_ip}" > ../../python/inventory
 	ansible-playbook \
-        -i python/inventory \
+        -i ../../python/inventory \
         -u ubuntu \
         --private-key ${var.private_key} \
         --ssh-common-args="-o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-        python/playbook.yaml
+        ../../python/playbook.yaml
     EOF
   }
 }

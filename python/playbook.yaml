@@ -33,5 +33,7 @@
         PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
       shell:
         chdir: "{{ ansible_env.HOME }}/python"
-        cmd: poetry install
+        cmd: |
+          poetry config virtualenvs.in-project true
+          poetry install
         executable: /bin/bash

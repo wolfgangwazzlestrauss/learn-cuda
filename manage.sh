@@ -14,9 +14,13 @@ manage.sh apply
 Provision cloud resources with Terraform
 
 USAGE:
-    manage.sh apply [FLAGS]
+    manage.sh apply [FLAGS] [provider]
+
 FLAGS:
     -h, --help       Print help information
+
+ARGS:
+    <provider>       Cloud platform
 EOF
             ;;
         connect)
@@ -26,8 +30,12 @@ Provision and connect to cloud resources
 
 USAGE:
     manage.sh connect [FLAGS] [OPTIONS]
+
 FLAGS:
     -h, --help       Print help information
+
+ARGS:
+    <provider>       Cloud platform
 EOF
             ;;
         destroy)
@@ -37,8 +45,12 @@ Remove cloud resources with Terraform
 
 USAGE:
     manage.sh destroy [FLAGS] [OPTIONS]
+
 FLAGS:
     -h, --help       Print help information
+
+ARGS:
+    <provider>       Cloud platform
 EOF
             ;;
         main)
@@ -48,26 +60,41 @@ Manage cloud resources with Terraform
 
 USAGE:
     manage [FLAGS] [SUBCOMMAND]
+
 FLAGS:
     -h, --help       Print help information
     -v, --version    Print version information
+
 SUBCOMMANDS:
     apply            Provision cloud resources with Terraform
+    connect          Provision and connect to cloud resources
     destroy          Remove cloud resources with Terraform
 EOF
             ;;
     esac
 }
 
-# Provision cloud resources with Terraform.
+# Apply subcommand.
 apply() {
     local _private_key
+
+    # Parse command line arguments.
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)
+                usage "apply"
+                exit 0
+                ;;
+            *)
+                ;;
+        esac
+    done
 
     generate_keys
     _private_key="$RET_VAL"
 
-    terraform init > /dev/null
-    terraform apply -auto-approve -var="private_key=$_private_key"
+    (cd "cloud/$1" && terraform init > /dev/null)
+    (cd "cloud/$1" && terraform apply -auto-approve -var="private_key=$_private_key")
 }
 
 # Assert that command can be found on machine.
@@ -82,16 +109,40 @@ check_cmd() {
     command -v "$1" > /dev/null 2>&1
 }
 
-# Provision and connect to cloud resources.
+# Connect subcommand.
 connect() {
+    # Parse command line arguments.
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)
+                usage "apply"
+                exit 0
+                ;;
+            *)
+                ;;
+        esac
+    done
+
     apply "$@"
-    eval "$(terraform output -raw connect)"
+    (cd "cloud/$1" && eval "$(terraform output -raw connect)")
 }
 
-# Remove resources with Terraform.
+# Destroy subcommand.
 destroy() {
+    # Parse command line arguments.
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)
+                usage "apply"
+                exit 0
+                ;;
+            *)
+                ;;
+        esac
+    done
+
     # Private key variable is still needed for destroy command.
-    terraform destroy -auto-approve -var="private_key=mock_path"
+    (cd "cloud/$1" && terraform destroy -auto-approve -var="private_key=mock_path")
 }
 
 # Print error message and exit with error code.
